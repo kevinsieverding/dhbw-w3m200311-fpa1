@@ -12,14 +12,6 @@
 % enable UTF-8 text input
 \usepackage[utf8]{inputenc}
 
-\usepackage[
-  extendedchars,
-  encoding,
-  multidot,
-  space,
-  filenameencoding=utf8,
-]{grffile}
-
 \input{preamble/packages.tex}
 
 \input{preamble/style/layout.tex}
@@ -28,8 +20,62 @@
 
 \begin{document}
 
+% FRONTMATTER
+
+% use roman page numerals to number frontmatter pages
+\pagenumbering{Roman}
+
+% use plain headers
+\pagestyle{plain.scrheadings}
+
+% start numbering pages at 2, to include cover page
+\setcounter{page}{2}
+
+% use single line spacing to make lists more compact
+\singlespacing
+
+\tableofcontents
+
+\clearpage
+
+% CONTENT
+
+% use arabic numerals for numbering content pages
+\pagenumbering{arabic}
+
+% use the default header style
+\pagestyle{scrheadings}
+
+% count content pages from 1
+\setcounter{page}{1}
+
+% MS Word does line spacing wrong.
+% To get true one-half spacing use '\onehalfspacing'.
+% To get something similar to MS Word, use '\setstretch{1.5}'.
+\setstretch{1.5}
+
 \section{Introduction}
 
 \Blindtext[4]
+
+% BACKMATTER
+
+\clearpage
+
+% use roman numerals to number backmatter pages
+\pagenumbering{Roman}
+
+% use plain headers for backmatter pages
+\pagestyle{plain.scrheadings}
+
+% start numbering backmatter pages from 1
+\setcounter{page}{1}
+
+% print bibliography in sloppypar environment for better URL placement
+\begin{sloppypar}
+  \printbibliography[
+    heading=bibintoc % include bibliography in table of contents
+  ]{}
+\end{sloppypar}
 
 \end{document}

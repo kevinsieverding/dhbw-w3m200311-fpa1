@@ -12,13 +12,29 @@
 % enable UTF-8 text input
 \usepackage[utf8]{inputenc}
 
+% DOCUMENT METADATA
+
+\author{Kevin Sieverding}
+\title{Messsage Schema Management: Overview and Evaluation}
+\subject{W3M20030.1 Forschungsmethoden der Wirtschaftsinformatik}
+
+% PREAMBLE
+
 \input{preamble/packages.tex}
 
 \input{preamble/style/layout.tex}
 \input{preamble/style/header-footer.tex}
 \input{preamble/style/style.tex}
 
+% setup hyperref after all packages have been loaded
+\hypersetup{
+  colorlinks=true,
+  allcolors=black,
+}
+
 \addbibresource{assets/bibliography.bib}
+
+% DOCUMENT
 
 \begin{document}
 
@@ -77,9 +93,9 @@
 
 % print bibliography in sloppypar environment for better URL placement
 \begin{sloppypar}
-  \printbibliography[
-    heading=bibintoc % include bibliography in table of contents
-  ]{}
+   \printbibliography[
+      heading=bibintoc % include bibliography in table of contents
+   ]{}
 \end{sloppypar}
 
 \end{document}

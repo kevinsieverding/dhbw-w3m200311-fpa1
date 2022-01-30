@@ -1,10 +1,20 @@
 %!TeX root = index.tex
 
+% BASICS
+
+% make 3rd party packages behave well with scrartcl
+\usepackage{scrhack}
+
 % simple arithmetics
 \usepackage{calc}
 
 % language support
 \usepackage[american]{babel}
+
+% advanced support for quotations
+\usepackage[
+  autostyle % adapt quote style to document language
+]{csquotes}
 
 % color support
 \usepackage[dvipsnames,table,hyperref,fixinclude]{xcolor}
@@ -12,5 +22,27 @@
 % graphics support
 \usepackage[]{graphicx}
 
+% hyperlink support
+\usepackage[breaklinks]{hyperref}
+
+% FORMATTING
+
+% micro-typography support (makes most fonts look a little nicer)
+\usepackage{microtype}
+
+% support for controlling line spacing
+\usepackage{setspace}
+
+% easily control widow and club penalties
+\usepackage[
+  defaultlines=4, % keep at least x lines before/after a page break
+  all, % apply to whole document
+]{nowidow}
+
+% MISC
+
 % useful blindtext in document language
 \usepackage{blindtext}
+
+% support for placing todo notes in margins
+\usepackage[obeyFinal,color=MaterialLightBlue,textsize=tiny]{todonotes}

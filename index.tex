@@ -1,5 +1,3 @@
-%!TeX root = index.tex
-
 \documentclass[
   % final,
   paper=a4,
@@ -11,8 +9,6 @@
   footsepline,
 ]{scrartcl}
 
-\reversemarginpar{}  % Put margins on inner side (left on onesided)
-
 \usepackage[
   extendedchars,
   encoding,
@@ -21,8 +17,16 @@
   filenameencoding=utf8,
 ]{grffile}
 
+\input{preamble/packages.tex}
+
+\input{preamble/style/layout.tex}
+\input{preamble/style/header-footer.tex}
+\input{preamble/style/style.tex}
+
 \begin{document}
 
-  test
+  \section{Introduction}
+
+  \Blindtext[4]
 
 \end{document}

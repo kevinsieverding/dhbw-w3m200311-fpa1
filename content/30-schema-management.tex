@@ -2,6 +2,33 @@
 
 \section{Schema Management}\label{sec:schema-management}
 
-\subsection{The Case for Schema Management}
+This section examines the problem domain of schema management by analyzing an example use case and parallel use cases from academic literature.
+Before though, it provides essential information regarding the two prominent technologies of these use cases: Apache Kafka and Apache Avro.
+Building on the analysis, the subsequent text deduces a definition of schema management and the characteristics of a schema management solution.
 
-\subsection{Schema Management in Literature}
+\subsection{Messaging Technologies}
+
+\subsubsection{Apache Kafka}
+
+The LinkedIn employees \citeauthor{kreps_kafka_2011} introduced Kafka in \citeyear{kreps_kafka_2011}.
+Over a decade later, the project has since joined the Apache foundation and \enquote{[m]ore than 80\% of all Fortune 100 companies trust, and use [it].} \parencite{noauthor_apache_nodate}.
+
+\citeauthor{kreps_kafka_2011} describe Kafka as \enquote{[\ldots] a novel messaging system for log processing [\ldots] that combines the benefits of traditional log aggregators and messaging systems.} \parencite{kreps_kafka_2011}.
+The solution has an \gls{api} that is similar to traditional \gls{mom}, yet it persists messages in an append-only log structure on the hard disk.
+This detail allows Kafka to not only stream data in near real-time but persist large amounts of it for online analytical processing.
+In addition to that, Kafka features partitioning and replication mechanisms which make it highly available and scalable. \parencite{kreps_kafka_2011}
+
+\subsubsection{Apache Avro}
+
+\citeauthor{kreps_kafka_2011} describe that they chose Apache Avro as the serialization protocol for its efficiency and schema evolution capabilities. 
+Avro provides the ability to define rich data structures and interfaces for \glspl{rpc} in schema documents.
+Furthermore, it offers an efficient binary data format for serialization.
+Avro's design assumes that applications that (de)-serialize data have access to the data's schema.
+That is one of the reasons why the format is so efficient since it does not need to include type information.
+
+
+\subsection{Schema Management Use Cases}
+
+\subsection{Definition of Schema Management}
+
+\subsection{Characteristics of Schema Management Solutions}

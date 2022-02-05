@@ -2,23 +2,25 @@
 
 \section{Introduction}\label{sec:introduction}
 
-When, in \citeyear{kreps_kafka_2011}, the LinkedIn employees \citeauthor{kreps_kafka_2011} introduced their new \enquote{Event Streaming Platform} \emph{Kafka}, they also mentioned a \enquote{lightweight schema registry service}.
-Eleven years later, Kafka has joined the Apache Software Foundation as an open-source project and \enquote{[m]ore than 80\% of all Fortune 100 companies trust, and use Kafka.} \parencite{noauthor_apache_nodate}
+My team and I working at SAP chose Apache Kafka as the central Message-oriented Middleware\todo{acronym} of our new application.
+It is supposed to facilitate the communication between the various microservices that make up our application.
+We also use Apache Avro do define schemas for the payload's or our messages and to serialize them.
+It soon became apparent to us, that if we wanted fully exploit Avro's capabilities for schema evolution in our distributed system, we needed a dedicated component to manage and serve our schemas.
+We discovered our requirement for schema management.
 
-\subsection{Structure}
+As we began searching for appropriate software solutions to address this requirement, two things became pretty clear to us: Firstly, the Confluent Schema Registry is the de facto standard solution for the management of message schemas in combination with Apache Kafka. Secondly, despite the dominance of Confluent's product, a variety of available solutions exists.
+
+Choosing a schema management solution is difficult for a variety of reasons. We experienced the following:
 
 \begin{enumerate}
-  \item Introduction
-  \item Approach
-  \item Schema Management
-        \begin{enumerate}
-          \item The Case for Schema Management
-          \item Schema Management in Literature
-        \end{enumerate}
-  \item Schema Management Solutions
-        \begin{enumerate}
-          \item Characteristics of Schema Management Solutions
-          \item Overview of Schema Management Solutions
-        \end{enumerate}
-  \item Conclusion
+  \item The problem domain of schema management is poorly defined.
+  \item The characteristics of a schema management solution are poorly defined.
+  \item The field of schema management solutions is dominated by the de facto standard. The Confluent Schema Registry.
 \end{enumerate}
+
+The goal of this work is to support the decision process of choosing a schema management solution.
+To achieve this, both the problem domain of schema management as well as the market for schema management solutions are examined.
+Based on this, a definition of schema management is deduced, as well as the characteristics of a schema management solution.
+These characteristics are then used to identify and compare the schema management solutions currently on the market.
+
+\todo{structure}

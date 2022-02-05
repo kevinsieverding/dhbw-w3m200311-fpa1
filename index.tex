@@ -33,6 +33,14 @@
   allcolors=black,
 }
 
+% setup acronyms
+
+\input{preamble/acronyms.tex}
+
+\makenoidxglossaries{}
+
+% setup bibliography
+
 \addbibresource{assets/bibliography.bib}
 
 % DOCUMENT
@@ -58,6 +66,22 @@
 \singlespacing
 
 \tableofcontents
+
+\clearpage
+
+\setlist[description]{leftmargin=!, labelwidth=4em}
+
+\printnoidxglossary[
+    % title=Abkürzungsverzeichnis,
+    % toctitle=Abkürzungsverzeichnis,
+    type=\acronymtype,
+    sort=nocase,
+    nogroupskip,
+    nopostdot,
+    nonumberlist
+]
+
+\setlist[description]{style=standard}
 
 \clearpage
 

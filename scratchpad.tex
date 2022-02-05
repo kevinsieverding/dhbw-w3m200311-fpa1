@@ -1,0 +1,40 @@
+% Introduction
+
+When, in \citeyear{kreps_kafka_2011}, the LinkedIn employees \citeauthor{kreps_kafka_2011} introduced their new \enquote{Event Streaming Platform} \emph{Kafka}, they also mentioned a \enquote{lightweight schema registry service}.
+Eleven years later, Kafka has joined the Apache Software Foundation as an open-source project and \enquote{[m]ore than 80\% of all Fortune 100 companies trust, and use [it].} \parencite{noauthor_apache_nodate}.
+
+Coinciding with Kafka's popularity in the private sector, a variety of academic works make use of it as a part of Information System\todo{acronym} designs in the IoT\todo{acronym} and Big Data areas.\todo{citation}
+Some of these also make mention employing a schema registry, referring to either just a \enquote{schema registry} or name the \enquote{Confluent Schema Registry} explicitly.
+
+\subsection{Motivation}\label{sub-sec:motivation}
+
+When my team and I working at SAP were searching for a Message-oriented Middleware\todo{acronym} to facilitate asynchronous communication between microservices that make up our application, we quickly discovered Apache Kafka and were intrigued by its features.
+
+We soon decided to use it as the central Message Broker of our application and chose Apache Avro to define message schemas and serialize message instances.
+So far, our setup mimicked the one described in \cite{kreps_kafka_2011} to a large degree.
+As they did, we then discovered that if we wanted to exploit Apache Avro's capabilities for schema evolution in our distributed system, we needed a dedicated software component to manage and distribute our message schemas.
+We discovered our requirement for schema management.
+
+\subsection{Problem}
+
+\subsection{Goal}
+
+\subsection{Structure}
+
+\subsection{Structure}
+
+\begin{enumerate}
+  \item Introduction
+  \item Approach
+  \item Schema Management
+        \begin{enumerate}
+          \item The Case for Schema Management
+          \item Schema Management in Literature
+        \end{enumerate}
+  \item Schema Management Solutions
+        \begin{enumerate}
+          \item Characteristics of Schema Management Solutions
+          \item Overview of Schema Management Solutions
+        \end{enumerate}
+  \item Conclusion
+\end{enumerate}

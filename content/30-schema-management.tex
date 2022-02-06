@@ -26,6 +26,12 @@ Furthermore, it offers an efficient binary data format for serialization.
 Avro's design assumes that applications that (de)-serialize data have access to the data's schema.
 That is one of the reasons why the format is so efficient since it does not need to include type information.
 
+\begin{listing}[H]
+  \inputminted{json}{assets/src/Person.avsc}
+  \label{lst:avro-schema-person}
+  \caption{Avro Schema of a Person Entity}
+\end{listing}
+
 
 \subsection{Schema Management Use Cases}
 

@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "Person",
+  "namespace": "com.example.v1",
+  "fields" : [
+    {"name": "firstName", "type": "string"},
+    {"name": "lastName", "type": "string"},
+    {"name": "age", "type": "int"}
+  ]
+}

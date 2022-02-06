@@ -10,13 +10,15 @@ Building on the analysis, the subsequent text deduces a definition of schema man
 
 \subsubsection{Apache Kafka}
 
-The LinkedIn employees \citeauthor{kreps_kafka_2011} introduced Kafka in \citeyear{kreps_kafka_2011}.
-Over a decade later, the project has since joined the Apache foundation and \enquote{[m]ore than 80\% of all Fortune 100 companies trust, and use [it].} \parencite{noauthor_apache_nodate}.
+The LinkedIn employees \citeauthor{kreps_kafka_2011} introduced their new \enquote{Event Streaming Platform} \emph{Kafka} in \citeyear{kreps_kafka_2011}. \parencite{kreps_kafka_2011}
+Over a decade later, the project has since joined the Apache foundation and \enquote{[m]ore than 80\% of all Fortune 100 companies trust, and use [it].} \parencite{apache_software_foundation_apache_nodate}.
 
 \citeauthor{kreps_kafka_2011} describe Kafka as \enquote{[\ldots] a novel messaging system for log processing [\ldots] that combines the benefits of traditional log aggregators and messaging systems.} \parencite{kreps_kafka_2011}.
-The solution has an \gls{api} that is similar to traditional \gls{mom}, yet it persists messages in an append-only log structure on the hard disk.
+The solution has an \gls{api} that is similar to traditional \gls{mom}, yet it persists messages in an append-only log structure on the hard drive.
 This detail allows Kafka to not only stream data in near real-time but persist large amounts of it for online analytical processing.
 In addition to that, Kafka features partitioning and replication mechanisms which make it highly available and scalable. \parencite{kreps_kafka_2011}
+
+
 
 \subsubsection{Apache Avro}
 
@@ -25,6 +27,7 @@ Avro provides the ability to define rich data structures and interfaces for \gls
 Furthermore, it offers an efficient binary data format for serialization.
 Avro's design assumes that applications that (de)-serialize data have access to the data's schema.
 That is one of the reasons why the format is so efficient since it does not need to include type information.
+\parencite{apache_software_foundation_apache_2021}
 
 \begin{listing}[H]
   \inputminted{json}{assets/src/Person.avsc}

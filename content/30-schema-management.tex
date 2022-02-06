@@ -42,14 +42,14 @@ It does not need to include type information in the serialized data.
 Avro's support for schema evolution builds upon this assumption.
 If an application attempts to de-serialize data encoded in Avro binary, it requires both the schema with which the data was written and the schema which the application understands.
 These schemas are called the \emph{writer} and the \emph{reader} schema respectively.
-These schemas might be equal. That is the simplest case.
-Avro also supports de-serializing data with a reader schema different from the writer schema.
-Although the de-serialization will only succeed, if both schemas are still \emph{compatible}.
+In the simplest case, these schemas might be equal.
+Nevertheless, Avro also supports de-serializing data with a reader schema different from the writer schema.
+Although, the de-serialization will only succeed if both schemas are still \emph{compatible}.
 \parencite{apache_software_foundation_apache_2021}
 
-For example, if the reader schema would have an additional field without a default value.
-That would be an incompatible change because Avro would not be able to infer a value for the additional field.
-If, on the other hand, the additional field had a default value, the de-serialization would succeed.
+If, for example, the reader schema had an additional field without a default value.
+It would be an incompatible change because Avro would not be able to infer a value for the additional field.
+On the other hand, if the field had a default value, the de-serialization would succeed.
 \citeauthor{kreps_kafka_2011} chose Apache Avro as the serialization protocol for their message payloads due to its efficiency and schema evolution capabilities \parencite{kreps_kafka_2011}. 
 
 \subsection{Schema Management Use Cases}

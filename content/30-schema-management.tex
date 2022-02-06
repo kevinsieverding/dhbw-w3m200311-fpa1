@@ -18,7 +18,10 @@ The solution has an \gls{api} that is similar to traditional \gls{mom}, yet it p
 This detail allows Kafka to not only stream data in near real-time but persist large amounts of it for online analytical processing.
 In addition to that, Kafka features partitioning and replication mechanisms which make it highly available and scalable. \parencite{kreps_kafka_2011}
 
-
+Kafka is not only useful for processing the kinds of log data that are proposed by \citeauthor{kreps_kafka_2011}: activity (e.~g. user logins, clicks, \enquote{likes}, \ldots) and operational data (e.~g. \gls{cpu} or disk utilization, \gls{http} requests, \ldots). \parencite{kreps_kafka_2011}
+\citeauthor{stopford_designing_2018}, for example, outlines how the entire state management and internal communication of a business application can be based on Apache Kafka.
+His design implements concepts from the \gls{ddd} community like Event Sourcing \parencite{fowler_event_sourcing_2005} and \gls{cqrs} \parencite{fowler_cqrs_2011} with Apache Kafka's log-based messaging at the center. \parencite{stopford_designing_2018}
+The potential use cases of Apache Kafka are therefore plentiful.
 
 \subsubsection{Apache Avro}
 

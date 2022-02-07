@@ -52,7 +52,20 @@ It would be an incompatible change because Avro would not be able to infer a val
 On the other hand, if the field had a default value, the de-serialization would succeed.
 \citeauthor{kreps_kafka_2011} chose Apache Avro as the serialization protocol for their message payloads due to its efficiency and schema evolution capabilities \parencite{kreps_kafka_2011}. 
 
-\subsection{Schema Management Use Cases}
+\subsection{The Case for Schema Management}
+
+This section examines the problem domain that schema management addresses.
+It does so by analyzing a hypothetical \gls{is} design for a web-shop application.
+The analysis serves as a basis for a definition of schema management and the characteristics of schema management solutions.
+
+The design features a set of microservice applications hosted on virtualized infrastructure.
+It employs Apache Kafka as a \gls{mom} to facilitate the communication between the microservices.
+Cross-functional teams develop and deploy each microservice with a great degree of independence.
+The teams use Apache Avro to define schemas for the messages that the microservices send and receive.
+They have integrated it into the services to serialize the payload of a message into Avro's binary format before they send it to Kafka.
+
+
+
 
 \subsection{Definition of Schema Management}
 

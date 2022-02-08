@@ -16,9 +16,30 @@
           "namespace": "de.neckar.orders.v1",
           "fields": [
             {"name": "itemNumber", "type": "int"},
-            {"name": "productId", "type": {"type": "int", "logicalType": "uuid"}},
-            {"name": "quantity", "type": {"type": "bytes", "logicalType": "decimal", "precision": 5}},
-            {"name": "price", "type": {"type": "bytes", "logicalType": "decimal", "precision": 10, "scale": 2}}
+            {
+              "name": "productId",
+              "type": {
+                "type": "int",
+                "logicalType": "uuid"
+              }
+            },
+            {
+              "name": "quantity", 
+              "type": {
+                "type": "bytes", 
+                "logicalType": "decimal", 
+                "precision": 5
+              }
+            },
+            {
+              "name": "price",
+              "type": {
+                "type": "bytes",
+                "logicalType": "decimal",
+                "precision": 10,
+                "scale": 2
+              }
+            }
           ]
         }
       }

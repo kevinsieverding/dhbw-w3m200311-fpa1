@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "Customer",
+  "namespace": "de.neckar.customers.v1",
+  "fields" : [
+    {"name": "id", "type": {"type": "int", "logicalType": "uuid"}},
+    {"name": "firstName", "type": "string"},
+    {"name": "lastName", "type": "string"}
+  ]
+}

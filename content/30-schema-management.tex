@@ -27,12 +27,12 @@ The potential use cases of Apache Kafka are therefore plentiful.
 
 Apache Avro provides the ability to define rich data structures and interfaces for \glspl{rpc} as schema documents.
 On top of that, it offers an efficient binary data format for serialization.
-Listing \ref{lst:avro-schema-person} shows an example for an Avro schema describing a person entity.
+Listing \ref{lst:avro-schema-person} shows an example for an Avro schema describing a customer entity.
 \parencite{apache_software_foundation_apache_2021}
 
 \begin{listing}[H]
-  \inputminted{json}{assets/src/Person.avsc}
-  \caption{Avro Schema of a Person Entity}\label{lst:avro-schema-person}
+  \inputminted{json}{assets/src/Customer.avsc}
+  \caption{Simplified Avro Schema of a Customer Entity}\label{lst:avro-schema-person}
 \end{listing}
 
 Avro's design assumes that applications that (de)-serialize data have access to the data's schema.
@@ -54,20 +54,43 @@ On the other hand, if the field had a default value, the de-serialization would 
 \subsection{The Case for Schema Management}
 
 This section examines the problem domain that schema management addresses.
-It does so by analyzing a hypothetical \gls{is} design for a web-shop application.
+It does so by analyzing the hypothetical \gls{is} design for a web-shop application depicted in figure \ref{fig:webshop}.
 The analysis serves as a basis for a definition of schema management and the characteristics of schema management solutions.
-
-The design features a set of microservice applications hosted on virtualized infrastructure.
-It employs Apache Kafka as a \gls{mom} to facilitate the communication between the microservices.
-Cross-functional teams develop and deploy each microservice with a great degree of independence.
-The teams use Apache Avro to define schemas for the messages that the microservices send and receive.
-They have integrated it into the services to serialize the payload of a message into Avro's binary format before they send it to Kafka.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\linewidth]{webshop.drawio.png}
-  \caption{Simplified Webshop Design Using Apache Kafka}\label{fig:webshop}
+  \caption{Simplified Web-Shop Design Using Apache Kafka}\label{fig:webshop}
 \end{figure}
+
+The design is loosely based on a design proposed in \cite[p.~148]{stopford_designing_2018} but condensed for simplicity.
+The boxes in the \enquote{Frontend} section depict fragments of the shop's \gls{ui} and the dashed arrows signify synchronous, \gls{http}-based communication.
+Further down, the three boxes each represent a microservice.
+
+\begin{description}
+  \item[Catalog Service] Presents a view of the currently available products and their current stock.
+  \item[Inventory Service] Keeps track of the shop's inventory and updates the stock based on incoming orders.
+  \item[Order Service] Handles users' order requests from the Checkout.
+\end{description}
+
+All of these services communicate amongst each other via messages that they write to or read from Kafka topics.\todo{explain kafka topics}
+The plain arrows depict the producing and consuming of messages.
+A typical ordering process could look like this:
+
+\begin{enumerate}
+  \item The Catalog Service consumes messages from the Products and Stock topics to calculate a view of the shop's current stock, enhanced with product details.
+  \item A user visits the shop and the Catalog view requests the current stock from the Catalog Service.
+  \item The user adds a product to their shopping cart and proceeds to the Checkout.
+  \item The Checkout sends a request to the Order Service to complete the user's order.
+  \item The Order Service creates the order (checks the successful payment, sends an email, \ldots) and publishes an \texttt{OrderCreated} event as a message to the Orders topic.
+  \item This new event is consumed by the Inventory Service. It updates the stock accordingly by publishing a \texttt{StockUpdated} event to the Stock topic.
+  \item The Catalog Service consumes the new event and updates its view of the current stock.
+\end{enumerate}
+
+% It features a set of microservice applications hosted on virtualized infrastructure and employs Apache Kafka as a \gls{mom} to facilitate the communication between the microservices.
+% Cross-functional teams develop and deploy each microservice with a great degree of independence.
+% The teams use Apache Avro to define schemas for the messages that the microservices send and receive.
+% They have integrated it into the services to serialize the payload of a message into Avro's binary format before they send it to Kafka.
 
 
 \subsection{Definition of Schema Management}

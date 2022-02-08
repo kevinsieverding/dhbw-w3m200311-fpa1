@@ -1,0 +1,27 @@
+{
+  "type": "record",
+  "name": "OrderCreated",
+  "namespace": "de.neckar.orders.v1",
+  "fields" : [
+    {"name": "id", "type": {"type": "int", "logicalType": "uuid"}},
+    {"name": "orderNumber", "type": "string"},
+    {"name": "customerId", "type": {"type": "int", "logicalType": "uuid"}},
+    {
+      "name": "items",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "OrderItem",
+          "namespace": "de.neckar.orders.v1",
+          "fields": [
+            {"name": "itemNumber", "type": "int"},
+            {"name": "productId", "type": {"type": "int", "logicalType": "uuid"}},
+            {"name": "quantity", "type": {"type": "bytes", "logicalType": "decimal", "precision": 5}},
+            {"name": "price", "type": {"type": "bytes", "logicalType": "decimal", "precision": 10, "scale": 2}}
+          ]
+        }
+      }
+    }
+  ]
+}

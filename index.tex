@@ -137,4 +137,28 @@
   ]{}
 \end{sloppypar}
 
+\clearpage
+
+\pagestyle{empty}
+
+{
+  \centering\Huge\mbox{}
+  \vfill{}
+  Appendix\\
+  \vfill{}
+}
+
+\clearpage
+
+\pagestyle{plain.scrheadings}
+
+\appendix
+
+\section{Avro Schema Example}
+
+\begin{listing}[H]
+  \inputminted{json}{assets/src/OrderCreated.avsc}
+  \caption{Example Avro Schema of an \texttt{OrderCreated} event}\label{lst:order-created}
+\end{listing}
+
 \end{document}

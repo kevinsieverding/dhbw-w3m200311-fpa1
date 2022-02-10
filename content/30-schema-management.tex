@@ -23,7 +23,7 @@ Kafka is not only useful for processing the kinds of log data that are proposed 
 His design implements concepts from the \gls{ddd} community like Event Sourcing \parencite{fowler_event_sourcing_2005} and \gls{cqrs} \parencite{fowler_cqrs_2011} with Apache Kafka's log-based messaging at the center \parencite{stopford_designing_2018}.
 The potential use cases of Apache Kafka are therefore plentiful.
 
-\subsubsection{Apache Avro}
+\subsubsection{Apache Avro}\label{sec:avro}
 
 Apache Avro provides the ability to define rich data structures and interfaces for \glspl{rpc} as schema documents.
 On top of that, it offers an efficient binary data format for serialization.
@@ -54,17 +54,17 @@ On the other hand, if the field had a default value, the de-serialization would 
 \subsection{The Case for Schema Management}
 
 This section examines the problem domain that schema management addresses.
-It does so by analyzing the hypothetical \gls{is} design for a web-shop application depicted in figure \ref{fig:webshop}.
+It does so by analyzing the hypothetical \gls{is} design for a web-shop application depicted in figure \ref{fig:web-shop}.
 The analysis serves as a basis for a definition of schema management and the characteristics of schema management solutions.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\linewidth]{webshop.drawio.png}
-  \caption{Simplified Web-Shop Design Using Apache Kafka}\label{fig:webshop}
+  \caption{Simplified Web-Shop Design Using Apache Kafka}\label{fig:web-shop}
 \end{figure}
 
 The design is loosely based on a design proposed in \cite[p.~148]{stopford_designing_2018} but condensed for simplicity.
-The boxes in the \enquote{Frontend} section depict fragments of the shop's \gls{ui} and the dashed arrows signify synchronous, \gls{http}-based communication.
+The boxes in the \enquote{Frontend} section depict fragments of the shop's \gls{ui}, and the dashed arrows signify synchronous, \gls{http}-based communication.
 Further down, the three boxes each represent a microservice.
 
 \begin{description}
@@ -79,13 +79,78 @@ A typical ordering process could look like this:
 
 \begin{enumerate}
   \item The Catalog Service consumes messages from the Products and Stock topics to calculate a view of the shop's current stock, enhanced with product details.
-  \item A user visits the shop and the Catalog view requests the current stock from the Catalog Service.
+  \item A user visits the shop and the Catalog View requests the current stock from the Catalog Service.
   \item The user adds a product to their shopping cart and proceeds to the Checkout.
   \item The Checkout sends a request to the Order Service to complete the user's order.
   \item The Order Service creates the order (checks the successful payment, sends an email, \ldots) and publishes an \texttt{OrderCreated} event as a message to the Orders topic.
+  Listing \ref{lst:order-created} in the appendix shows what the schema for an \texttt{OrderCreated} event might look like.
   \item This new event is consumed by the Inventory Service. It updates the stock accordingly by publishing a \texttt{StockUpdated} event to the Stock topic.
   \item The Catalog Service consumes the new event and updates its view of the current stock.
 \end{enumerate}
+
+Furthermore, the design uses Apache Avro for the following purposes:
+
+\begin{itemize}
+  \item Efficient data transfer and storage by serializing message payloads in Avro's compact binary format.
+  \item Improved interoperability by using schemas as communication contracts.
+  \item Improved flexibility via schema evolution. In other words, it allows compatible changes to message schemas without breaking the contract.
+\end{itemize}
+
+Using schemas also creates new problems.
+A system that uses schemas for its communication needs to distribute them to all communicating parties---meaning applications---at both the compile-time and the run-time.
+The following paragraphs explain why that is and what possible solutions exist.
+
+% If multiple services need to work with an event of the same type, then both require the message schema of that event.
+% For example, this is the case for the Order Service and the Inventory Service.
+% They both produce or consume messages of the type \texttt{OrderCreated}, so they both need to have the schema for this message type.
+
+Each application requires the schema of a message type that it wants to work with at its compilation.
+Otherwise, if the application wants to produce a message, it would not know how to serialize the payload.
+If it wants to consume a message, it would not know how to interpret its structure.
+
+A simple solution is to package the schemas using a dependency management tool.
+For Java-based projects, for example, they could be packaged into a Maven\footnote{\url{https://maven.apache.org/}} Artifact and published to a registry.
+The individual services could then declare this artifact as a dependency to include the schemas during their compilation.
+This solution comes with the caveat that the package would be language-dependent.
+To consume the schemas in a NodeJS-based application, they also need to be packaged and published as an artifact of NodeJS' package management tool NPM.
+These factors create overhead and a potentially complicated setup for \gls{cicd}.
+Additionally, it requires all of the projects which consume the message schema dependency to upgrade it manually if they want to use the most recent schemas.
+
+Beyond the disadvantages of the described solution, it fulfills the requirement of distributing schemas at compile-time.
+By distributing schemas at compile-time, the system benefits from the efficiency of Avro's binary format.
+It also creates a weak communication contract between producers and consumers.
+Consumers can check if the payloads that they de-serialize match the schemas they expect and reject those that do not.
+However, no check exists on the producer side, meaning they can write incompatible data to the topic.
+Still, if the system is supposed to harness the full advantages of schemas, they also need to be distributed amongst the applications at run-time.
+
+As described in \ref{sec:avro}, Avro supports schema evolution by allowing some differences between the schema used to serialize data and the schema used to de-serialize that data.
+This schema evolution can make the application more flexible by reducing the coupling between the microservices.
+If consumers had access to all versions of schemas they are interested in, they could handle one-sided changes to those schemas.
+
+Consider this scenario: The Order Service adds a field with a default value to the schema of \texttt{OrderCreated} events---a compatible change---and is deployed.
+With \emph{only compile-time distribution} of schemas, the Inventory Service would not be able to consume the messages produced by this new version of the \texttt{OrderService}.
+That is because the Inventory Service only knows a single version of the schema for \texttt{OrderCreated} events, which does not match the writer schema of the new messages.
+This breaks the communication between the two microservices.
+To fix it again, the developers must upgrade the version of the schema used by the Inventory Service and deploy it anew.
+The rigid dependency on shared schemas creates tight coupling between the Inventory Service and the Order service.
+
+With \emph{run-time distribution} of schemas, the Inventory Service can access the specific version of a message's schema dynamically at run-time.
+Therefore, if the Order service sends \texttt{OrderCreated} events with a new version of the message schema, the Inventory service can download this new version when consuming the messages.
+That means that both the writer and reader schema are present at de-serialization, allowing Avro to map between them and produce the data in a format the service can use.
+Run-time distribution allows producers to change their message schemas without breaking communication.
+Therefore, it loosens the coupling between the services and makes the application more flexible.
+
+One question remains: How are schemas provided to services at run-time?
+That is where schema management solutions come into the picture.
+
+
+
+% A simple solution is to include the message schema in the message's headers\todo{explain message structure}.
+% This way, only the application which writes messages of a certain type needs 
+% Although this would diminish the efficiency advantage of Avro's binary format, which is in part achieved by \emph{not} including the schema with the serialized payload.
+
+% Therefore, the system needs to distribute the schemas to the applications in another way.
+
 
 % It features a set of microservice applications hosted on virtualized infrastructure and employs Apache Kafka as a \gls{mom} to facilitate the communication between the microservices.
 % Cross-functional teams develop and deploy each microservice with a great degree of independence.

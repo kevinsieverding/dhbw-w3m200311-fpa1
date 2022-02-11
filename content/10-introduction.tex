@@ -27,18 +27,51 @@ For example due to changing customer or market needs.
 This work will refer to this quality as \emph{flexibility} from here on.
 
 Different design and work patterns have emerged to create reactive systems.
-\cite{boner_reactive_2014} references one directly in the fourth quality of reactive systems: Message-driven.
-Message-driven systems \enquote{rely on asynchronous message-passing to
-establish a boundary between components that ensures loose coupling, isolation,
-location transparency, and provides the means to delegate errors as messages.} \parencite{boner_reactive_2014}
-This description of a message-driven system assumes that it is a set of separate components.
-While this does not necessarily reference microservice architecture---another pattern for building reactive systems---the pattern definitely fits the description.
+One that is increasingly popular is microservice architecture \parencite{loukides_microservice_adoption_2020}.
 
 \subsection{Microservice Architecture}
 
+\citeauthor{richardson_microservices_2019} defines the microservice pattern as \enquote{an architectural style that functionally decomposes an application into a set of services} \parencite[11]{richardson_microservices_2019}.
+The services are supposed to be loosely coupled, independently deployable, and scalable.
+They are also small enough to be developed by a single, largely autonomous team.
+The compartmentalization of the application also allows for it to tolerate partial failure.
+If a single service fails, the rest of the application may stay partially functional.
+\parencite[14f.]{richardson_microservices_2019}
+These qualities contribute to the application's overall elasticity, resilience, and flexibility.
 
+It is pointed out by \citeauthor{fowler_microservices_2014} that microservices commonly integrate with each other via synchronous communication protocols like \glspl{rpc} or \acrshort{http} \parencite{fowler_microservices_2014}.
+This introduces different forms of coupling to the system.
+First, the services need to know routes via which they can reach another directly.
+Second, the services need to know not only the structure of the data they exchange but also the design anothers' \gls{api}.
+Last, the synchronous nature of the communication couples the services in the dimension of time.
+A service either completes a request in time, or the request reaches a timeout.
+It is for this reason that many applications rely on asynchronous, message-driven communication via \gls{mom} \parencite{fowler_microservices_2014}.
 
 \subsection{\acrlong{mom}}
+
+\cite{boner_reactive_2014} defines one additional quality of reactive systems: message-driven.
+Message-driven systems \enquote{rely on asynchronous message-passing to
+establish a boundary between components that ensures loose coupling, isolation,
+location transparency, and provides the means to delegate errors as messages.} \parencite{boner_reactive_2014}
+As shown in figure \ref{fig:reactive-traits}, the message-driven quality actually forms the foundation for achieving all other qualities of a reactive system.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{reactive-traits.png}
+  \caption{The Qualities of a Reactive System \parencite{boner_reactive_2014}}
+  \label{fig:reactive-traits}
+\end{figure}
+
+\cite{banavar_case_1999} coined the term of \acrlong{mom} for dedicated software components meant to integrate disparate applications in a distributed system by facilitating asynchronous message-passing between them.
+\citeauthor{banavar_case_1999} based their work in part on the publish/subscribe semantics described in \cite{oki_information_1993} which are still present in the more comprehensive exploration of \gls{mom} in \cite{curry_message-oriented_2004} and prevail to this day.
+
+\begin{itemize}
+  \item different protocols for mom exist (AMQP, MQTT) and different mom applications RabbitMQ or Mosquitto
+  \item applications publish messages to topics
+  \item applications subscribe to topics to receive messages published to them
+  \item messages can either be delivered directly or stored temporarily in a queue
+  \item apache kafka does things a little differently
+\end{itemize}
 
 \subsection{Apache Kafka}
 
@@ -91,7 +124,7 @@ On the other hand, if the field had a default value, the de-serialization would 
 
 \section{Schema Management}
 
-\subsection{Schemas In Distributed Systems}
+\subsection{Schemas in Distributed Systems}
 
 \subsection{Schema Management Solutions}
 

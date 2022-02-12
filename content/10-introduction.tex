@@ -6,17 +6,14 @@
 
 \citeauthor{boner_reactive_2014} describe how modern \glspl{is} of different domains all exhibit similar qualities.
 \citetitle{boner_reactive_2014} summarizes those qualities and dubs the systems which feature them \enquote{reactive} \parencite{boner_reactive_2014}.
-Put into the context of the quality dimensions defined by the \citetitle{iso_25010_2011} standard,
-the reactive qualities cover only \enquote{Performance Efficiency} and \enquote{Reliability}.
-While the other quality dimensions of the \citeauthor{iso_25010_2011} standard are certainly also important, this work focuses on the two mentioned before.\todo{improve sentence flow}
-
-To quickly summarize \cite{boner_reactive_2014}, reactive systems are:
-
-\begin{description}
-  \item[Responsive] The system has low upper ceilings for its response times and meets these consistently.
-  \item[Resilient] The system remains responsive in the face of failure.
-  \item[Elastic] The system remains responsive under varying workload.
-\end{description}
+% Put into the context of the quality dimensions defined by the \citetitle{iso_25010_2011} standard,
+% the reactive qualities cover only \enquote{Performance Efficiency} and \enquote{Reliability}.
+% While the other quality dimensions of the \citeauthor{iso_25010_2011} standard are certainly also important, this work focuses on the two mentioned before.\todo{improve sentence flow}
+According to \cite{boner_reactive_2014}, reactive systems are \emph{responsive}, meaning that they have low upper ceilings for their response times and meet them consistently.
+Additionally, reactive systems remain responsive in the face of failure.
+They are \emph{resilient}.
+Lastly, a system needs to remain responsive under varying work-load.
+It needs to be \emph{elastic}, to be reactive.
 
 All of these qualities cover the technological perspective on reactive systems.
 However, there is a business perspective to the term, too.
@@ -27,7 +24,7 @@ For example due to changing customer or market needs.
 This work will refer to this quality as \emph{flexibility} from here on.
 
 Different design and work patterns have emerged to create reactive systems.
-One that is increasingly popular is microservice architecture \parencite{loukides_microservice_adoption_2020}.
+The following section explores an increasingly popular one: microservice architecture \parencite{loukides_microservice_adoption_2020}.
 
 \subsection{Microservice Architecture}
 
@@ -49,7 +46,7 @@ It is for this reason that many applications rely on asynchronous, message-drive
 
 \subsection{\acrlong{mom}}
 
-\cite{boner_reactive_2014} defines one additional quality of reactive systems: message-driven.
+\cite{boner_reactive_2014} defines one additional quality of reactive systems: \emph{message-driven}.
 Message-driven systems \enquote{rely on asynchronous message-passing to
 establish a boundary between components that ensures loose coupling, isolation,
 location transparency, and provides the means to delegate errors as messages.} \parencite{boner_reactive_2014}
@@ -185,7 +182,7 @@ The inventory service consumes the events from the \texttt{Orders} topic and upd
 These events are read by the catalog service, which also reads from the \texttt{Products} topic.
 The service joins these two event streams to materialize a view of the current stock combined with product details, which it presents to the catalog view upon request.
 
-\subsection{Introducing Schemas}
+\subsection{Benefits of Schemas for Reactive \acrlongpl{is}}
 
 Introducing Avro schemas to the system can make the web-shop more reactive in several ways.
 First, if the microservices serialize the contents of their messages using Avro's compact binary format instead of, for example, UTF8-encoded JSON objects, it would reduce the overall size of the messages.
@@ -206,9 +203,9 @@ Without a mechanism like feature toggling, the teams must deploy them simultaneo
 Schema evolution removes the coordination effort for making one-sided, compatible data model changes.
 That makes microservices more independent, their development teams more autonomous, and the system more flexible.
 
-\subsubsection{Schema Evolution}
+\subsection{Introducing Schemas to Reactive \acrlongpl{is}}
 
-\subsubsection{Schema Revolution}
+
 
 \section{Schema Management}
 

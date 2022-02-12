@@ -85,15 +85,17 @@ Over a decade later, the project has since joined the Apache foundation and \enq
 
 \citeauthor{kreps_kafka_2011} describe Kafka as \enquote{[\ldots] a novel messaging system for log processing [\ldots] that combines the benefits of traditional log aggregators and messaging systems.} \parencite{kreps_kafka_2011}.
 Similar to traditional \gls{mom}, \emph{producers} publish messages to logical communication channels called topics and \emph{consumers} can subscribe to topics to consume messages.
-In contrast to traditional \gls{mom} however, topics are backed by one or more \emph{partitions}, an actual append-only data structure stored on the hard drive of a server running Kafka called a \emph{broker}.
-Therefore, Kafka persists all messages sequentially for a configurable time even if the servers restart.
+In contrast to traditional \gls{mom} however, topics are backed by one or more \emph{partitions}, an append-only data structure stored on the hard drive of a server running Kafka called a \emph{broker}.
+Therefore, Kafka persists all messages sequentially for a configurable time even if the brokers restart.
 Producers address messages to a topic but actually always publish them to a partition.
 To which partition they publish a message if there are multiple is determined by a partitioning algorithm.
 Partitions can also have replicas on other brokers, making Kafka tolerant against the failure of single servers.
+\parencite{kreps_kafka_2011}
+
 A message in Kafka does not have a dedicated ID.
 Instead, it is identified by its logical offset within its partition.
 Consumers consume messages sequentially and move a pointer to the next offset after they have processed the message at the current position.
-Furthermore, consumers can form groups in which no two members will subscribe to the same partition, thereby achieving a simple load balancing mechanism.
+Furthermore, consumers can form groups in which no two members subscribe to the same partition, thereby achieving a simple load balancing mechanism.
 That also makes the number of partitions that a topic has the maximum degree of parallelism with which consumers can consume its messages.
 \parencite{kreps_kafka_2011}
 

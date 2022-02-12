@@ -8,7 +8,7 @@
 \citetitle{boner_reactive_2014} summarizes those qualities and dubs the systems which feature them \enquote{reactive} \parencite{boner_reactive_2014}.
 Put into the context of the quality dimensions defined by the \citetitle{iso_25010_2011} standard,
 the reactive qualities cover only \enquote{Performance Efficiency} and \enquote{Reliability}.
-While the other quality dimensions of the \citeauthor{iso_25010_2011} standard are certainly also important, this work focuses on the two mentioned before.
+While the other quality dimensions of the \citeauthor{iso_25010_2011} standard are certainly also important, this work focuses on the two mentioned before.\todo{improve sentence flow}
 
 To quickly summarize \cite{boner_reactive_2014}, reactive systems are:
 
@@ -18,10 +18,10 @@ To quickly summarize \cite{boner_reactive_2014}, reactive systems are:
   \item[Elastic] The system remains responsive under varying workload.
 \end{description}
 
-These qualities cover \enquote{reactive} systems from a technological perspective.
-However, there is also a business perspective to the term.
+All of these qualities cover the technological perspective on reactive systems.
+However, there is a business perspective to the term, too.
 Reactive systems also need to be flexible.
-They need to be able to respond and change quickly according to changing requirements.
+They need be able to to respond and change quickly according to changing requirements.
 For example due to changing customer or market needs.
 \citeauthor{beck2001agile} describe this quality as part of their \citetitle{beck2001agile} \parencite{beck2001agile}.
 This work will refer to this quality as \emph{flexibility} from here on.
@@ -116,33 +116,72 @@ Furthermore, some technologies like Avro or ProtoBuf do offer other capabilities
 
 \subsection{Apache Avro}
 
-Apache Avro is a schema technology for describing the syntactical structure of documents and \gls{rpc}-based \glspl{api} with some additional features.
+Apache Avro is a schema technology for describing the syntactical structure of documents and \gls{rpc}-based \glspl{api}.
 Beyond the schema definitions, Avro also provides a compact binary serialization format and support for schema evolution.
 Listing \ref{lst:avro-schema-person} shows an example for an Avro schema describing a customer entity.
 \parencite{avro}
+
 
 \begin{listing}[H]
   \inputminted{json}{assets/src/Customer.avsc}
   \caption{Simplified Avro Schema of a Customer Entity}\label{lst:avro-schema-person}
 \end{listing}
 
-Avro's design assumes that applications which (de-)serialize data have access to the data's schema.
-That is one of the reasons why the format is so efficient.
-It does not need to include type information in the serialized data.
-Avro's support for schema evolution builds upon this assumption.
-If an application attempts to de-serialize data encoded in Avro binary, it requires both the schema with which the data was written and the schema which the application understands.
-These schemas are called the \emph{writer} and the \emph{reader} schema respectively.
-In the simplest case, these schemas might be equal.
-Nevertheless, Avro also supports de-serializing data with a reader schema different from the writer schema.
-Although, the de-serialization will only succeed if both schemas are still \emph{compatible}.
+When a client uses Avro's tooling to serialize a document to binary, Avro expects the document's schema as an input beside the actual data.
+The schema is used to write the serialized data sequentially without any type information. 
+This makes the resulting byte stream compact but also hard to de-serialize without the document's schema.
+The schema with which a document was serialized is called the \emph{writer} schema.
 \parencite{avro}
 
-If, for example, the reader schema had an additional field without a default value.
-It would be an incompatible change because Avro would not be able to infer a value for the additional field.
-On the other hand, if the field had a default value, the de-serialization would succeed.
-\citeauthor{kreps_kafka_2011} chose Apache Avro as the serialization protocol for their message payloads due to its efficiency and schema evolution capabilities \parencite{kreps_kafka_2011}. 
+A client that uses Avro to de-serialize a byte stream into a document might expect a certain structure for the document.
+That is called the \emph{reader} schema.
+Avro expects both the writer and the reader schema as inputs besides the serialized byte stream to de-serialize a document.
+\parencite{avro}
+
+In many cases, the writer and reader schema may be equal, yet in some, they might be different.
+For example, if an application uses Avro to serialize data to the hard drive and changes its data model and schemas in the meantime.
+When the application later reads the data and attempts to de-serialize it, it can use the changed schema as the reader schema but must use the old schema as the writer schema.
+Only in this way is Avro able to properly read the serialized data.
+If the differences between the schemas are \emph{compatible} Avro can map the data from the reader to the writer schema and successfully de-serialize the data.
+If not, then the de-serialization fails.
+\parencite{avro}
+
+In this way, Avro supports the compatible evolution of schemas.
+Compatible changes are, for example, the adding of a new field with a default value or the removal of a field with a default value.
+With Avro's support for field name aliases, fields can even be renamed in a compatible manner.
+The Avro project also includes tooling to check the compatibility of two schemas.
+\parencite{avro}
+
+% \citeauthor{kreps_kafka_2011} chose Apache Avro as the serialization protocol for their message payloads due to its efficiency and schema evolution capabilities \parencite{kreps_kafka_2011}. 
 
 \subsection{Schemas in Distributed Systems}
+
+To examine how schemas can fit into a reactive system, consider the following example:
+A web-shop application where users can view the current catalog of products and place orders.
+The example omits other aspects of a web-shop for simplicity.
+The web-shop's architecture follows the microservice architecture and uses Kafka as a \gls{mom} to be reactive.
+Figure \ref{fig:web-shop} presents a simple overview of the shop's components and their communication.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{webshop.drawio.png}
+  \caption{Simplified Web-Shop Design Using Apache Kafka}\label{fig:web-shop}
+\end{figure}
+
+At the top, the \gls{ui} is comprised of two fragments: the catalog view and the checkout.
+The catalog view displays the shop's current inventory to the user, fetching it via a synchronous HTTP request from the catalog service.
+At the checkout, the user can order items from the catalog, for which the view sends an HTTP request to the order service.
+
+In the backend, the order service processes users' orders (payments, shipping calculation, \ldots) and publishes \texttt{OrderCreated} events to the \texttt{Orders} topic in Kafka.
+% Listing \ref{lst:order-created} shows what the Avro schema for such an event might look like.
+Please note, \enquote{event} is a term from \gls{ddd} and describes the record of an occurrence like \enquote{The user created an order.}.
+In this example, the microservices communicate by recording and sharing the events occurring in their respective business domain by publishing them as messages to Kafka topics.
+Therefore, an event is always a message, but a message is not always an event.
+
+The inventory service consumes the events from the \texttt{Orders} topic and updates the shop's stock accordingly by publishing \texttt{StockUpdated} events to the \texttt{Stock} topic.
+These events are read by the catalog service, which also reads from the \texttt{Products} topic.
+The service joins these two event streams to materialize a view of the current stock combined with product details, which it presents to the catalog view upon request.
+
 
 \subsubsection{Schema Evolution}
 

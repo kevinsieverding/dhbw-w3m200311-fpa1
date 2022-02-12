@@ -87,6 +87,8 @@ Over a decade later, the project has since joined the Apache foundation and \enq
 Similar to traditional \gls{mom}, \emph{producers} publish messages to logical communication channels called topics and \emph{consumers} can subscribe to topics to consume messages.
 In contrast to traditional \gls{mom} however, topics are backed by one or more \emph{partitions}, an actual append-only data structure stored on the hard drive of a server running Kafka called a \emph{broker}.
 Therefore, Kafka persists all messages sequentially for a configurable time even if the servers restart.
+Producers address messages to a topic but actually always publish them to a partition.
+To which partition they publish a message if there are multiple is determined by a partitioning algorithm.
 Partitions can also have replicas on other brokers, making Kafka tolerant against the failure of single servers.
 A message in Kafka does not have a dedicated ID.
 Instead, it is identified by its logical offset within its partition.
@@ -101,10 +103,6 @@ His design implements concepts from the \gls{ddd} community like Event Sourcing 
 The potential use cases of Apache Kafka are therefore plentiful.
 
 \section{Schemas}
-
-\subsection{Schema Evolution}
-
-\subsection{Schema Revolution}
 
 \subsection{Apache Avro}
 
@@ -134,9 +132,13 @@ It would be an incompatible change because Avro would not be able to infer a val
 On the other hand, if the field had a default value, the de-serialization would succeed.
 \citeauthor{kreps_kafka_2011} chose Apache Avro as the serialization protocol for their message payloads due to its efficiency and schema evolution capabilities \parencite{kreps_kafka_2011}. 
 
-\section{Schema Management}
-
 \subsection{Schemas in Distributed Systems}
+
+\subsection{Schema Evolution}
+
+\subsection{Schema Revolution}
+
+\section{Schema Management}
 
 \subsection{Schema Management Solutions}
 

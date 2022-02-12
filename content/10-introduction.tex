@@ -84,9 +84,16 @@ The LinkedIn employees \citeauthor{kreps_kafka_2011} introduced their new \enquo
 Over a decade later, the project has since joined the Apache foundation and \enquote{[m]ore than 80\% of all Fortune 100 companies trust, and use [it]} \parencite{apache_software_foundation_apache_nodate}.
 
 \citeauthor{kreps_kafka_2011} describe Kafka as \enquote{[\ldots] a novel messaging system for log processing [\ldots] that combines the benefits of traditional log aggregators and messaging systems.} \parencite{kreps_kafka_2011}.
-The solution has an \gls{api} that is similar to traditional \gls{mom}, yet it persists messages in an append-only log structure on the hard drive.
-This detail allows Kafka to not only stream data in near real-time but persist large amounts of it for online analytical processing.
-In addition to that, Kafka features partitioning and replication mechanisms which make it highly available and scalable. \parencite{kreps_kafka_2011}
+Similar to traditional \gls{mom}, \emph{producers} publish messages to logical communication channels called topics and \emph{consumers} can subscribe to topics to consume messages.
+In contrast to traditional \gls{mom} however, topics are backed by one or more \emph{partitions}, an actual append-only data structure stored on the hard drive of a server running Kafka called a \emph{broker}.
+Therefore, Kafka persists all messages sequentially for a configurable time even if the servers restart.
+Partitions can also have replicas on other brokers, making Kafka tolerant against the failure of single servers.
+A message in Kafka does not have a dedicated ID.
+Instead, it is identified by its logical offset within its partition.
+Consumers consume messages sequentially and move a pointer to the next offset after they have processed the message at the current position.
+Furthermore, consumers can form groups in which no two members will subscribe to the same partition, thereby achieving a simple load balancing mechanism.
+That also makes the number of partitions that a topic has the maximum degree of parallelism with which consumers can consume its messages.
+\parencite{kreps_kafka_2011}
 
 Kafka is not only useful for processing the kinds of log data that are proposed by \citeauthor{kreps_kafka_2011}: activity (e.~g. user logins, clicks, \enquote{likes}, \ldots) and operational data (e.~g. \gls{cpu} or disk utilization, HTTP requests, \ldots) \parencite{kreps_kafka_2011}.
 \citeauthor{stopford_designing_2018}, for example, outlines how the entire state management and internal communication of a business application can be based on Apache Kafka.

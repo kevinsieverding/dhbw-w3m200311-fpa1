@@ -42,7 +42,7 @@ These qualities contribute to the application's overall elasticity, resilience, 
 It is pointed out by \citeauthor{fowler_microservices_2014} that microservices commonly integrate with each other via synchronous communication protocols like \glspl{rpc} or HTTP \parencite{fowler_microservices_2014}.
 This introduces different forms of coupling to the system.
 First, the services need to know routes via which they can reach another directly.
-Second, the services need to know not only the structure of the data they exchange but also the design anothers' \gls{api}.
+Second, the services need to know not only the structure of the data they exchange but also each others' \gls{api}.
 Last, the synchronous nature of the communication couples the services in the dimension of time.
 A service either completes a request in time, or the request reaches a timeout.
 It is for this reason that many applications rely on asynchronous, message-driven communication via \gls{mom} \parencite{fowler_microservices_2014}.
@@ -53,7 +53,7 @@ It is for this reason that many applications rely on asynchronous, message-drive
 Message-driven systems \enquote{rely on asynchronous message-passing to
 establish a boundary between components that ensures loose coupling, isolation,
 location transparency, and provides the means to delegate errors as messages.} \parencite{boner_reactive_2014}
-As shown in figure \ref{fig:reactive-traits}, the message-driven quality actually forms the foundation for achieving all other qualities of a reactive system.
+As shown in figure \ref{fig:reactive-traits}, the message-driven quality forms the foundation for achieving all other qualities of a reactive system.
 
 \begin{figure}
   \centering
@@ -93,25 +93,33 @@ Partitions can also have replicas on other brokers, making Kafka tolerant agains
 \parencite{kreps_kafka_2011}
 
 A message in Kafka does not have a dedicated ID.
-Instead, it is identified by its logical offset within its partition.
+Instead, a message's logical offset within its partition identifies it.
 Consumers consume messages sequentially and move a pointer to the next offset after they have processed the message at the current position.
 Furthermore, consumers can form groups in which no two members subscribe to the same partition, thereby achieving a simple load balancing mechanism.
 That also makes the number of partitions that a topic has the maximum degree of parallelism with which consumers can consume its messages.
 \parencite{kreps_kafka_2011}
 
 Kafka is not only useful for processing the kinds of log data that are proposed by \citeauthor{kreps_kafka_2011}: activity (e.~g. user logins, clicks, \enquote{likes}, \ldots) and operational data (e.~g. \gls{cpu} or disk utilization, HTTP requests, \ldots) \parencite{kreps_kafka_2011}.
-\citeauthor{stopford_designing_2018}, for example, outlines how the entire state management and internal communication of a business application can be based on Apache Kafka.
-His design implements concepts from the \gls{ddd} community like Event Sourcing \parencite{fowler_event_sourcing_2005} and \gls{cqrs} \parencite{fowler_cqrs_2011} with Apache Kafka's log-based messaging at the center \parencite{stopford_designing_2018}.
-The potential use cases of Apache Kafka are therefore plentiful.
+\citeauthor{stopford_designing_2018}, for example, outlines how Kafka can serve as the basis of a business application's entire state management and internal communication.
+His design implements concepts from the \gls{ddd} community like Event Sourcing \parencite{fowler_event_sourcing_2005} and \gls{cqrs} \parencite{fowler_cqrs_2011} with Kafka's log-based messaging at the center \parencite{stopford_designing_2018}.
+The potential use cases of Kafka are therefore plentiful.
 
 \section{Schemas}
 
+This section examines schema technologies and how they can be used to make a distributed \gls{is} more reactive.
+For the latter purpose, the text proposes a hypothetical design of an \gls{is} using microservices and Kafka as a \gls{mom}.
+This example serves as a basis to analyze what advantages the introduction of Apache Avro as a schema technology provides, what new problems it causes and how to address them.\todo{reason for choosing avro/kafka}
+
+Schemas are structured documents that describe the structure of other documents.
+Schema technologies like XML schema, JSON schema, Apache Avro, or Google's Protocol Buffers (ProtoBuf) focus on describing the \emph{syntactical} structure of a document while others like the \gls{owl} or the \gls{rdf} intend to also define the \emph{semantic} structure of documents as well \parencites{xmlschema}{jsonschema}{avro}{protobuf}{owl}{rdf}.
+Furthermore, some technologies like Avro or ProtoBuf do offer other capabilities beyond describing the structure of documents, like describing the structure of \gls{rpc}-based \glspl{api} \parencites{avro}{protobuf}.
+
 \subsection{Apache Avro}
 
-Apache Avro provides the ability to define rich data structures and interfaces for \glspl{rpc} as schema documents.
-On top of that, it offers an efficient binary data format for serialization.
+Apache Avro is a schema technology for describing the syntactical structure of documents and \gls{rpc}-based \glspl{api} with some additional features.
+Beyond the schema definitions, Avro also provides a compact binary serialization format and support for schema evolution.
 Listing \ref{lst:avro-schema-person} shows an example for an Avro schema describing a customer entity.
-\parencite{apache_software_foundation_apache_2021}
+\parencite{avro}
 
 \begin{listing}[H]
   \inputminted{json}{assets/src/Customer.avsc}
@@ -127,7 +135,7 @@ These schemas are called the \emph{writer} and the \emph{reader} schema respecti
 In the simplest case, these schemas might be equal.
 Nevertheless, Avro also supports de-serializing data with a reader schema different from the writer schema.
 Although, the de-serialization will only succeed if both schemas are still \emph{compatible}.
-\parencite{apache_software_foundation_apache_2021}
+\parencite{avro}
 
 If, for example, the reader schema had an additional field without a default value.
 It would be an incompatible change because Avro would not be able to infer a value for the additional field.
@@ -136,9 +144,9 @@ On the other hand, if the field had a default value, the de-serialization would 
 
 \subsection{Schemas in Distributed Systems}
 
-\subsection{Schema Evolution}
+\subsubsection{Schema Evolution}
 
-\subsection{Schema Revolution}
+\subsubsection{Schema Revolution}
 
 \section{Schema Management}
 

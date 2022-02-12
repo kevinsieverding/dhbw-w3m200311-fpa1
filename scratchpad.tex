@@ -97,7 +97,7 @@ The potential use cases of Apache Kafka are therefore plentiful.
 Apache Avro provides the ability to define rich data structures and interfaces for \glspl{rpc} as schema documents.
 On top of that, it offers an efficient binary data format for serialization.
 Listing \ref{lst:avro-schema-person} shows an example for an Avro schema describing a customer entity.
-\parencite{apache_software_foundation_apache_2021}
+\parencite{avro}
 
 \begin{listing}[H]
   \inputminted{json}{assets/src/Customer.avsc}
@@ -113,7 +113,7 @@ These schemas are called the \emph{writer} and the \emph{reader} schema respecti
 In the simplest case, these schemas might be equal.
 Nevertheless, Avro also supports de-serializing data with a reader schema different from the writer schema.
 Although, the de-serialization will only succeed if both schemas are still \emph{compatible}.
-\parencite{apache_software_foundation_apache_2021}
+\parencite{avro}
 
 If, for example, the reader schema had an additional field without a default value.
 It would be an incompatible change because Avro would not be able to infer a value for the additional field.

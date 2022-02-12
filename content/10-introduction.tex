@@ -114,9 +114,9 @@ Schemas are structured documents that describe the structure of other documents.
 Schema technologies like XML schema, JSON schema, Apache Avro, or Google's Protocol Buffers (ProtoBuf) focus on describing the \emph{syntactical} structure of a document while others like the \gls{owl} or the \gls{rdf} intend to also define the \emph{semantic} structure of documents as well \parencites{xmlschema}{jsonschema}{avro}{protobuf}{owl}{rdf}.
 Furthermore, some technologies like Avro or ProtoBuf do offer other capabilities beyond describing the structure of documents, like describing the structure of \gls{rpc}-based \glspl{api} \parencites{avro}{protobuf}.
 
-\subsection{Apache Avro}
+% \subsection{Apache Avro}
 
-Apache Avro is a schema technology for describing the syntactical structure of documents and \gls{rpc}-based \glspl{api}.
+% Apache Avro is a schema technology for describing the syntactical structure of documents and \gls{rpc}-based \glspl{api}.
 Beyond the schema definitions, Avro also provides a compact binary serialization format and support for schema evolution.
 Listing \ref{lst:avro-schema-person} shows an example for an Avro schema describing a customer entity.
 \parencite{avro}
@@ -154,12 +154,15 @@ The Avro project also includes tooling to check the compatibility of two schemas
 
 % \citeauthor{kreps_kafka_2011} chose Apache Avro as the serialization protocol for their message payloads due to its efficiency and schema evolution capabilities \parencite{kreps_kafka_2011}. 
 
-\subsection{Schemas in Distributed Systems}
+\section{Schemas in Reactive \acrlongpl{is}}
 
 To examine how schemas can fit into a reactive system, consider the following example:
 A web-shop application where users can view the current catalog of products and place orders.
 The example omits other aspects of a web-shop for simplicity.
 The web-shop's architecture follows the microservice architecture and uses Kafka as a \gls{mom} to be reactive.
+
+\subsection{A Reactive Web-Shop Application}
+
 Figure \ref{fig:web-shop} presents a simple overview of the shop's components and their communication.
 
 \begin{figure}[H]
@@ -182,6 +185,26 @@ The inventory service consumes the events from the \texttt{Orders} topic and upd
 These events are read by the catalog service, which also reads from the \texttt{Products} topic.
 The service joins these two event streams to materialize a view of the current stock combined with product details, which it presents to the catalog view upon request.
 
+\subsection{Introducing Schemas}
+
+Introducing Avro schemas to the system can make the web-shop more reactive in several ways.
+First, if the microservices serialize the contents of their messages using Avro's compact binary format instead of, for example, UTF8-encoded JSON objects, it would reduce the overall size of the messages.
+That would increase the system's throughput of messages, potentially making it more responsive.
+It also would make more efficient use of the Kafka broker's disk storage.
+
+Furthermore, the introduction of schemas would formalize establishing shared understandings about data between microservices.
+Instead of informal communications or semi-formal specifications that development teams exchange, schemas represent formal documents that can be checked for soundness, compared, and managed via version control systems.
+This reduces the risk of failures occurring due to \enquote{misunderstandings} and makes the system more resilient.
+Additionally, when consumers attempt to de-serialize messages which do not conform to their expected schema, the de-serialization fails.
+This fail-early mechanism can prevent more critical failures down the line, thereby contributing to the system's resilience.
+
+Lastly, schema evolution capabilities like Avro's can reduce the coupling between microservices introduced by the need to form a shared understanding about the data they exchange.
+Consider this example: The order service makes changes to its data model that also affect the \texttt{OrderCreated} events.
+If the order service team deploys the service immediately and it starts publishing messages with the new schema, it would break the communication with the inventory service.
+Therefore, both services must start to use the new schema simultaneously.
+Without a mechanism like feature toggling, the teams must deploy them simultaneously, which negates one of the main advantages of microservices: That they are independently deployable.
+Schema evolution removes the coordination effort for making one-sided, compatible data model changes.
+That makes microservices more independent, their development teams more autonomous, and the system more flexible.
 
 \subsubsection{Schema Evolution}
 

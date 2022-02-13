@@ -4,18 +4,18 @@
 
 This section examines schema technologies and how they can be used to make a distributed \gls{is} more reactive.
 For the latter purpose, the text proposes a hypothetical design of an \gls{is} using microservices and Kafka as a \gls{mom}.
-This example serves as a basis to analyze what advantages the introduction of Apache Avro as a schema technology provides, what new problems it causes and how to address them.\todo{reason for choosing avro/kafka}
+This example serves as a basis to analyze what advantages the introduction of Apache Avro as a schema technology provides, what new problems it causes and how to address them.
 
 \subsection{Schemas}
 
 Schemas are structured documents that describe the structure of other documents.
-Schema technologies like XML schema, JSON schema, Apache Avro, or Google's Protocol Buffers (ProtoBuf) focus on describing the \emph{syntactical} structure of a document while others like the \gls{owl} or the \gls{rdf} intend to also define the \emph{semantic} structure of documents as well \parencites{xmlschema}{jsonschema}{avro}{protobuf}{owl}{rdf}.
-Furthermore, some technologies like Avro or ProtoBuf do offer other capabilities beyond describing the structure of documents, like describing the structure of \gls{rpc}-based \glspl{api} \parencites{avro}{protobuf}.
+Schema technologies like XML schema, JSON schema, Apache Avro, or Google's Protocol Buffers (ProtoBuf) focus on describing the \emph{syntactical} structure of a document while others like the \gls{owl} or the \gls{rdf} intend to also define the \emph{semantic} structure of documents as well.\footcites{xmlschema}{jsonschema}{avro}{protobuf}{owl}{rdf}
+Furthermore, some technologies like Avro or ProtoBuf do offer other capabilities beyond describing the structure of documents, like describing the structure of \gls{rpc}-based \glspl{api}.\footcites{avro}{protobuf}
 
 \subsection{Apache Avro}
 
 % Apache Avro is a schema technology for describing the syntactical structure of documents and \gls{rpc}-based \glspl{api}.
-Beyond the schema definitions, Avro also provides a compact binary serialization format and support for schema evolution.
+Beyond schema definitions, Avro also provides a compact binary serialization format and support for schema evolution.
 Listing \ref{lst:avro-schema-person} shows an example for an Avro schema describing a customer entity.
 \parencite{avro}
 
@@ -35,8 +35,8 @@ That is called the \emph{reader} schema.
 Avro expects both the writer and the reader schema as inputs besides the serialized byte stream to de-serialize a document.
 \parencite{avro}
 
-In many cases, the writer and reader schema may be equal, yet in some, they might be different.
-For example, if an application uses Avro to serialize data to the hard drive and changes its data model and schemas in the meantime.
+In cases where the writer and reader schemas are different, Avro provides a schema evolution mechanism.
+For example, if an application uses Avro to serialize data to the hard drive and then changes its data model and schemas.
 When the application later reads the data and attempts to de-serialize it, it can use the changed schema as the reader schema but must use the old schema as the writer schema.
 Only in this way is Avro able to properly read the serialized data.
 If the differences between the schemas are \emph{compatible} Avro can map the data from the reader to the writer schema and successfully de-serialize the data.
@@ -56,7 +56,7 @@ The Avro project also includes tooling to check the compatibility of two schemas
 To examine how schemas can fit into a reactive system, consider the following example:
 A web-shop application where users can view the current catalog of products and place orders.
 The example omits other aspects of a web-shop for simplicity.
-The web-shop's architecture follows the microservice architecture and uses Kafka as a \gls{mom} to be reactive.
+The web-shop's architecture follows the microservice pattern and uses Kafka as a \gls{mom}.
 
 Figure \ref{fig:web-shop} presents a simple overview of the shop's components and their communication.
 
@@ -68,12 +68,12 @@ Figure \ref{fig:web-shop} presents a simple overview of the shop's components an
 
 At the top, the \gls{ui} is comprised of two fragments: the catalog and the checkout.
 The catalog displays the shop's current inventory to the user, fetching it via a synchronous HTTP request from the catalog service.
-At the checkout, the user can order items from the catalog, for which the view sends an HTTP request to the order service.
+At the checkout, the user can order items from the catalog, for which it sends an HTTP request to the order service.
 
-In the backend, the order service processes users' orders (payments, shipping calculation, \ldots) and publishes \texttt{OrderCreated} events to the \texttt{Orders} topic in Kafka.
+In the backend, the order service processes the users' orders (payments, shipping calculation, \ldots) and publishes \texttt{OrderCreated} events to the \texttt{Orders} topic in Kafka.
 % Listing \ref{lst:order-created} shows what the Avro schema for such an event might look like.
-Please note, \enquote{event} is a term from \gls{ddd} and describes the record of an occurrence like \enquote{The user created an order.}.
-In this example, the microservices communicate by recording and sharing the events occurring in their respective business domain by publishing them as messages to Kafka topics.
+Please note, \enquote{event} is a term from \gls{ddd} and describes the record of an occurrence like \enquote{The user submitted an order.}.
+In this example architecture, microservices communicate by recording and sharing events occurring in their respective business domain by publishing them as messages to Kafka topics.
 Therefore, an event is always a message, but a message is not always an event.
 
 The inventory service consumes the events from the \texttt{Orders} topic and updates the shop's stock accordingly by publishing \texttt{StockUpdated} events to the \texttt{Stock} topic.
@@ -83,11 +83,11 @@ The service joins these two event streams to materialize a view of the current s
 \subsection{Benefits of Schemas for Reactive \acrlongpl{is}}\label{sec:schema-benefits}
 
 Introducing Avro schemas to the system can make the web-shop more reactive in several ways.
-First, if the microservices serialize the contents of their messages using Avro's compact binary format instead of, for example, UTF8-encoded JSON objects, it would reduce the overall size of the messages.
-That would increase the system's throughput of messages, potentially making it more responsive.
-It also would make more efficient use of the Kafka broker's disk storage.
+First, if the microservices serialize the contents of their messages using Avro's compact binary format instead of, for example, UTF8-encoded JSON objects, it reduces the overall size of the messages.
+That increases the system's throughput of messages, potentially making it more responsive.
+It also makes more efficient use of the Kafka broker's disk storage.
 
-Furthermore, the introduction of schemas would formalize the shared understandings about data between microservices.
+Furthermore, the introduction of schemas formalizes the shared understandings about data between microservices.
 Instead of informal communications or semi-formal specifications that development teams exchange, schemas represent formal documents that can be checked for soundness, compared, and managed via version control systems.
 This reduces the risk of failures occurring due to \enquote{misunderstandings} and makes the system more resilient.
 Additionally, when consumers attempt to de-serialize messages which do not conform to their expected schema, the de-serialization fails.
@@ -107,13 +107,13 @@ In order to adopt Avro, the development teams have to define schemas for all the
 Listing \ref{lst:order-created} shows what a schema for the \texttt{OrderCreated} event might look like.
 Furthermore, each microservice has to use the Avro tooling to (de-)serialize the messages they produce or consume.
 Avro offers its functionality as libraries for a variety of programming platforms via the platforms' dependency management tools (Maven, NPM, \ldots) \parencite{avro}.
-Services can declare a dependency toward the Avro library for their platform to work with it.
+Services can declare a dependency toward the Avro library to work with it.
 
 Beyond the functionality of Avro, the microservices also require the actual schemas for the messages they produce or consume so they can implement against the concrete data structures.
 Since multiple services work with the same event type, like the order and inventory services, the schemas need to be available in multiple places.
 Rather than simply duplicating the schemas in each service's codebase in violation of the \enquote{Don't Repeat Yourself} principle, the schemas should be kept in a single version-controlled repository.
 A \gls{cicd} setup can package the schemas into an artifact and publish it to the artifact registry of the appropriate programming platform.
-Service can then declare a dependency toward this artifact to consume the schemas.
+Services can then declare a dependency toward this artifact to consume the schemas.
 
 The described setup can be considered the minimum for integrating Avro into a microservice architecture.
 By using Avro to (de-)serialize message payloads, this setup already provides two of the benefits described in \ref{sec:schema-benefits}: reduced message size and formalized communication contracts.
@@ -124,7 +124,7 @@ Additionally, services can not de-serialize older messages in the log that were 
 
 Messages need to carry information about their writer schema to facilitate schema evolution.
 A simple way of implementing this is to include the writer schema in each message, for example, as a message header.
-While being simple, this solution severely restricts the benefit gained from Avro's compact binary format by bloating the message.
-Instead, messages could include a reference to the writer schema instead of the whole thing to optimize the approach.
+While being simple, this solution severely restricts the benefit gained from Avro's compact binary format by bloating the message with type information.
+Instead, messages could include a reference to the writer schema in the place of the whole thing to optimize the approach.
 However, where would consumers look up the writer schema based on the reference?
-At this point, schema management and schema management solutions come into play.
+This is where schema management and schema management solutions come into play.

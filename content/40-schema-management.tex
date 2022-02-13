@@ -7,25 +7,25 @@ This is the core functional requirement of schema management.
 \cite{kreps_kafka_2011} address it by introducing a dedicated software component to their system that stores schemas and makes them available.
 They refer to this component as a \emph{schema registry}.
 
-\subsection{Schema Registries}
+\subsection{Schema Management Solutions}
 
-A schema registry offers an \gls{api} that allows clients to upload schemas and query for them based on an identifier.
+A schema registry offers an \gls{api} that allows clients to upload schemas and query them based on an identifier.
 Producers use this \gls{api} to upload the schema of a message to the registry before they publish it.
 If the schema does not exist, the registry stores it and generates a unique identifier that it returns to the producer.
 Otherwise, if the schema exists, the registry returns the existing identifier.
 The producer then includes this identifier in the message's headers.
 
 Consumers read the schema reference from the message before de-serializing its payload and use it to request the message's writer schema from the registry.
-Producers and consumers can cache the reference-to-schema mapping locally to reduce the number of requests to the registry.
+Producers and consumers can cache the reference-to-schema mapping in their memory to reduce the number of requests to the registry.
 
-When de-serializing the message, consumers use the fetched writer schema and their compile-time reader schema to utilize Avro's schema evolution capabilities.
+When de-serializing a message, consumers use the fetched writer schema and their compile-time reader schema to utilize Avro's schema evolution capabilities.
 In this manner, a schema registry facilitates the benefits of schema evolution while maintaining the benefits of Avro's binary format.
 
 Beyond the run-time distribution of schemas, schema registries can provide additional functionality that improves the system's resilience.
 As mentioned before, Avro provides tooling to check the compatibility of two schemas.
 A schema registry that integrates this tooling can provide compatibility checks for new schemas.
 
-To examine the possible applications of compatibility checks in the schema registry consider the following exmaple:
+To examine the possible applications of compatibility checks in the schema registry, consider the following example:
 The order service is deployed with incompatible changes to the \texttt{OrderCreated} schema.
 It receives a user request to submit an order and, after processing it, attempts to publish an \texttt{OrderCreated} event with the new schema.
 Since the service does not have an identifier for the new schema in its cache, it uploads it to the registry.
@@ -38,17 +38,16 @@ It prevents producers from writing incompatible messages to Kafka, keeping the l
 The example improves the system's resilience by containing failures due to incompatible changes in the producer instead of spreading them to the consumers.
 
 The web-shop's development setup could also incorporate the schema registry to check schema compatibility even earlier in the development cycle.
-The single repository for all schemas described in \ref{sec:introducing-schemas} can be partially replaced by a schema registry.
-Schemas can be kept in the repositories of their associated microservices.
+The single repository for all schemas described in \ref{sec:introducing-schemas} can be replaced by the schema registry and schemas are kept in the repositories of their associated microservices.
 For example, the \texttt{OrderCreated} schema would be part of the order service's codebase.
 
-A new step for uploading schemas is added to the \gls{cicd} process of all services.
+Schemas are distributed by adding a new step for uploading schemas to the \gls{cicd} process of all services.
 This step may also include compatibility checks, causing the process to fail if incompatible changes were made to the schemas.
 Such a setup would prevent incompatible schema changes from even getting deployed.
 Services that depend on the schemas of other services like the inventory service can add a step to their \gls{cicd} process to download the schemas from the registry.
 Keeping the schemas close to the services which \emph{own} them streamlines the development process and improves the system's flexibility while compatibility checks in the \gls{cicd} process improve the system's resilience.
 
-To summarize, schema registries enable distributed systems to become more flexible by using schema evolution without bloating their messages by including schema information.
+To summarize, schema registries enable distributed systems to become more flexible by enabling schema evolution without bloating their messages.
 Furthermore, schema registries can provide compatibility checks which improve the system's resilience by detecting incompatible schema changes earlier in the development process.
 Lastly, schema registries can streamline the development process if they are integrated into the microservice's \gls{cicd} setup.
 
@@ -56,12 +55,9 @@ Lastly, schema registries can streamline the development process if they are int
 
 Based on the characteristics of schema registries explored above, the following definitions of schema management and schema management solutions can be deduced:
 
-\begin{quote}
-  \centering
-  Schema management is the process of creating, validating, storing and distributing schema documents.
-
-  Schema management solutions---often called \emph{schema registries}--- are software applications dedicated to supporting the process of schema management.
-\end{quote}
-
-Schema management solutions feature a persistence for schema documents and an \gls{api} for uploading and querying them.
-Additionally, schema management solutions may feature automatic soundness and compatibility checks for schema documents.
+\begin{description}
+  \item[Schema Management] is the process of creating, validating, storing and distributing schema documents.
+  \item[Schema Management Solutions] (often called \emph{schema registries}) are software applications dedicated to supporting the process of schema management.
+  Schema management solutions feature a persistence for schema documents and an \gls{api} for uploading and querying them.
+  Additionally, they may feature soundness and compatibility checks for schema documents.
+\end{description}

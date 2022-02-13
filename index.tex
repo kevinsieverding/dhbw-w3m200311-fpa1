@@ -3,7 +3,7 @@
   paper=a4,
   parskip=half,
   fontsize=12pt,
-  listof=notoc,
+  listof=toc,
   titlepage,
   headsepline,
   footsepline,
@@ -82,8 +82,6 @@
 \setlist[description]{leftmargin=!, labelwidth=4em}
 
 \printnoidxglossary[
-    % title=Abkürzungsverzeichnis,
-    % toctitle=Abkürzungsverzeichnis,
     type=\acronymtype,
     sort=nocase,
     nogroupskip,
@@ -92,6 +90,10 @@
 ]
 
 \setlist[description]{style=standard}
+
+\newcounter{frontpagecount}
+\addtocounter{frontpagecount}{\value{page}}
+\addtocounter{frontpagecount}{1}
 
 \clearpage
 
@@ -126,27 +128,18 @@
 \pagestyle{plain.scrheadings}
 
 % start numbering backmatter pages from 1
-\setcounter{page}{1}
+\setcounter{page}{\value{frontpagecount}}
 
-% print bibliography in sloppypar environment for better URL placement
-\begin{sloppypar}
-  \printbibliography[
-    heading=bibintoc % include bibliography in table of contents
-  ]{}
-\end{sloppypar}
+% \pagestyle{empty}
 
-\clearpage
+% {
+%   \centering\Huge\mbox{}
+%   \vfill{}
+%   Appendix\\
+%   \vfill{}
+% }
 
-\pagestyle{empty}
-
-{
-  \centering\Huge\mbox{}
-  \vfill{}
-  Appendix\\
-  \vfill{}
-}
-
-\clearpage
+% \clearpage
 
 \pagestyle{plain.scrheadings}
 
@@ -158,5 +151,16 @@
   \inputminted[fontsize=\scriptsize]{json}{assets/src/OrderCreated.avsc}
   \caption{Example Avro Schema of an \texttt{OrderCreated} Event}\label{lst:order-created}
 \end{listing}
+
+\clearpage
+
+% print bibliography in sloppypar environment for better URL placement
+\begin{sloppypar}
+  \printbibliography[
+    heading=bibintoc % include bibliography in table of contents
+  ]{}
+\end{sloppypar}
+
+\clearpage
 
 \end{document}

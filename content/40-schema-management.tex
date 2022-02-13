@@ -4,7 +4,7 @@
 
 Consumers require a way to look up schemas at run-time based on references included in the messages that they consume.
 This is the core functional requirement of schema management.
-\cite{kreps_kafka_2011}\todo{add other potential citations} address it by introducing a dedicated software component to their system that stores schemas and makes them available.
+\cite{kreps_kafka_2011} address it by introducing a dedicated software component to their system that stores schemas and makes them available.
 They refer to this component as a \emph{schema registry}.
 
 \subsection{Schema Registries}
@@ -51,3 +51,17 @@ Keeping the schemas close to the services which \emph{own} them streamlines the 
 To summarize, schema registries enable distributed systems to become more flexible by using schema evolution without bloating their messages by including schema information.
 Furthermore, schema registries can provide compatibility checks which improve the system's resilience by detecting incompatible schema changes earlier in the development process.
 Lastly, schema registries can streamline the development process if they are integrated into the microservice's \gls{cicd} setup.
+
+\subsection{Schema Management Definition}
+
+Based on the characteristics of schema registries explored above, the following definitions of schema management and schema management solutions can be deduced:
+
+\begin{quote}
+  \centering
+  Schema management is the process of creating, validating, storing and distributing schema documents.
+
+  Schema management solutions---often called \emph{schema registries}--- are software applications dedicated to supporting the process of schema management.
+\end{quote}
+
+Schema management solutions feature a persistence for schema documents and an \gls{api} for uploading and querying them.
+Optionally, schema management solutions may feature automatic soundness and compatibility checks for schema documents.

@@ -202,7 +202,7 @@ Without a mechanism like feature toggling, the teams must deploy them simultaneo
 Schema evolution removes the coordination effort for making one-sided, compatible data model changes.
 That makes microservices more independent, their development teams more autonomous, and the system more flexible.
 
-\subsection{Introducing Schemas to Reactive \acrlongpl{is}}
+\subsection{Introducing Schemas to Reactive \acrlongpl{is}}\label{sec:introducing-schemas}
 
 In order to adopt Avro, the development teams have to define schemas for all the messages their services produce or consume.
 Listing \ref{lst:order-created} shows what a schema for the \texttt{OrderCreated} event might look like.
@@ -234,7 +234,7 @@ At this point, schema management and schema management solutions come into play.
 
 Consumers require a way to look up schemas at run-time based on references included in the messages that they consume.
 This is the core functional requirement of schema management.
-\cite{kreps}\todo{add other potential citations} address it by introducing a dedicated software component to their system that stores schemas and makes them available.
+\cite{kreps_kafka_2011}\todo{add other potential citations} address it by introducing a dedicated software component to their system that stores schemas and makes them available.
 They refer to this component as a \emph{schema registry}.
 
 A schema registry offers an \gls{api} that allows clients to upload schemas and query for them based on an identifier.
@@ -264,9 +264,13 @@ The setup in this example moves the compatibility check from the consumer (as de
 It prevents producers from writing incompatible messages to Kafka, keeping the log clean.
 The example improves the system's resilience by containing failures due to incompatible changes in the producer instead of spreading them to the consumers.
 
+The web-shop's development setup could also incorporate the schema registry to check schema compatibility even earlier in the development cycle.
+The single repository for all schemas described in \ref{sec:introducing-schemas} can be partially replaced by a schema registry.
+Schemas can be kept in the repositories of their associated microservices, for example, the \texttt{OrderCreated} schema would be part of the order service's codebase.
 
-
-
-\subsection{Schema Management Solutions}
+A new step for uploading schemas is added to the \gls{cicd} process of all services.
+This step may also include compatibility checks, causing the pipeline to fail if incompatible changes were made to the schemas.
+Such a setup would prevent incompatible schema changes from even getting deployed.
+Services that depend on the schemas of other services, like the inventory service does, can add a step to their \gls{cicd} process to download the schemas from the registry.
 
 \section{Overview of Schema Management Solutions}

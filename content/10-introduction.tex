@@ -21,7 +21,7 @@ Reactive systems also need to be flexible.
 They need be able to to respond and change quickly according to changing requirements.
 For example due to changing customer or market needs.
 \citeauthor{beck2001agile} describe this quality as part of their \citetitle{beck2001agile} \parencite{beck2001agile}.
-This work will refer to this quality as \emph{flexibility} from here on.
+The text will refer to this quality as \emph{flexibility} from here on.
 
 Different design and work patterns have emerged to create reactive systems.
 The following section explores an increasingly popular one: microservice architecture \parencite{loukides_microservice_adoption_2020}.
@@ -118,7 +118,6 @@ Beyond the schema definitions, Avro also provides a compact binary serialization
 Listing \ref{lst:avro-schema-person} shows an example for an Avro schema describing a customer entity.
 \parencite{avro}
 
-
 \begin{listing}[H]
   \inputminted{json}{assets/src/Customer.avsc}
   \caption{Simplified Avro Schema of a Customer Entity}\label{lst:avro-schema-person}
@@ -182,14 +181,14 @@ The inventory service consumes the events from the \texttt{Orders} topic and upd
 These events are read by the catalog service, which also reads from the \texttt{Products} topic.
 The service joins these two event streams to materialize a view of the current stock combined with product details, which it presents to the catalog view upon request.
 
-\subsection{Benefits of Schemas for Reactive \acrlongpl{is}}
+\subsection{Benefits of Schemas for Reactive \acrlongpl{is}}\label{sec:schema-benefits}
 
 Introducing Avro schemas to the system can make the web-shop more reactive in several ways.
 First, if the microservices serialize the contents of their messages using Avro's compact binary format instead of, for example, UTF8-encoded JSON objects, it would reduce the overall size of the messages.
 That would increase the system's throughput of messages, potentially making it more responsive.
 It also would make more efficient use of the Kafka broker's disk storage.
 
-Furthermore, the introduction of schemas would formalize establishing shared understandings about data between microservices.
+Furthermore, the introduction of schemas would formalize the shared understandings about data between microservices.
 Instead of informal communications or semi-formal specifications that development teams exchange, schemas represent formal documents that can be checked for soundness, compared, and managed via version control systems.
 This reduces the risk of failures occurring due to \enquote{misunderstandings} and makes the system more resilient.
 Additionally, when consumers attempt to de-serialize messages which do not conform to their expected schema, the de-serialization fails.
@@ -205,7 +204,31 @@ That makes microservices more independent, their development teams more autonomo
 
 \subsection{Introducing Schemas to Reactive \acrlongpl{is}}
 
+In order to adopt Avro, the development teams have to define schemas for all the messages their services produce or consume.
+Listing \ref{lst:order-created} shows what a schema for the \texttt{OrderCreated} event might look like.
+Furthermore, each microservice has to use the Avro tooling to (de-)serialize the messages they produce or consume.
+Avro offers its functionality as libraries for a variety of programming platforms via the platforms' dependency management tools (Maven, NPM, \ldots) \parencite{avro}.
+Services can declare a dependency toward the Avro library for their platform to work with it.
 
+Beyond the functionality of Avro, the microservices also require the actual schemas for the messages they produce or consume so they can implement against the concrete data structures.
+Since multiple services work with the same event type, like the order and inventory services, the schemas need to be available in multiple places.
+Rather than simply duplicating the schemas in each service's codebase in violation of the \enquote{Don't Repeat Yourself} principle, the schemas should be kept in a single version-controlled repository.
+A \gls{cicd} setup can package the schemas into an artifact and publish it to the artifact registry of the appropriate programming platform.
+Service can then declare a dependency toward this artifact to consume the schemas.
+
+The described setup can be considered the minimum for integrating Avro into a microservice architecture.
+By using Avro to (de-)serialize message payloads, this setup already provides two of the benefits described in \ref{sec:schema-benefits}: reduced message size and formalized communication contracts.
+However, this setup does not facilitate schema evolution since every service only has access to the schemas it was compiled with.
+That means services have to always use the compile-time schema as both the writer and the reader schema when de-serializing messages.
+Schema changes have to be adopted by all services that work with the particular schema simultaneously.
+Additionally, services can not de-serialize older messages in the log that were serialized with an older schema version.
+
+Messages need to carry information about their writer schema to facilitate schema evolution.
+A simple way of implementing this is to include the writer schema in each message, for example, as a message header.
+While being simple, this solution severely restricts the benefit gained from Avro's compact binary format by bloating the message.
+Instead, messages could include a reference to the writer schema instead of the whole thing to optimize the approach.
+However, where would consumers look up the writer schema based on the reference?
+At this point, schema management and schema management solutions come into play.
 
 \section{Schema Management}
 

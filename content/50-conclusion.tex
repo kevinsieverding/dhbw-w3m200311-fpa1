@@ -2,6 +2,16 @@
 
 \section{Conclusion}\label{sec:conclusion}
 
-\subsection{Discussion}
+This work set out to answer the question of what benefits schemas and schema management provide to a distributed system using \gls{mom}.
+To that end, it analyzes the introduction of Avro schemas to an example architecture and judges its benefits based on the qualities of reactive systems.
 
-\subsection{Future Work}
+As a result, section \ref{sec:schema-benefits} describes the benefits of schemas for reactive systems.
+Section \ref{sec:schema-management} continues by describing how schema management addresses the caveat of schema evolution identified by \ref{sec:introducing-schemas}.
+In summary, schemas can make a system more responsive, resilient, and flexible.
+However, a schema management solution is required to make proper use of schema evolution.
+Finally, section \ref{sec:schema-management-definition} deduces a definition of schema management and schema management solutions from the previous analysis.
+
+Still, many open points remain.
+For example, it would be intriguing to see whether the findings of this work also transfer to a similar setup that uses different technologies like a combination of Google's ProtoBuf and RabbitMQ.
+Furthermore, the introduction alluded to an issue in the literature with very little diversity in the schema management solutions used.
+This work does not address that issue, but it may serve as a solid foundation for future work that tackles it.

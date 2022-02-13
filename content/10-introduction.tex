@@ -232,6 +232,41 @@ At this point, schema management and schema management solutions come into play.
 
 \section{Schema Management}
 
+Consumers require a way to look up schemas at run-time based on references included in the messages that they consume.
+This is the core functional requirement of schema management.
+\cite{kreps}\todo{add other potential citations} address it by introducing a dedicated software component to their system that stores schemas and makes them available.
+They refer to this component as a \emph{schema registry}.
+
+A schema registry offers an \gls{api} that allows clients to upload schemas and query for them based on an identifier.
+Producers use this \gls{api} to upload the schema of a message to the registry before they publish it.
+If the schema does not exist, the registry stores it and generates a unique identifier that it returns to the producer.
+Otherwise, if the schema exists, the registry returns the existing identifier.
+The producer then includes this identifier in the message's headers.
+
+Consumers read the schema reference from the message before de-serializing its payload.
+They use this reference to request the message's writer schema from the registry.
+When de-serializing the message, consumers use the fetched writer schema and their compile-time reader schema to utilize Avro's schema evolution capabilities.
+Producers and consumers can cache the reference-to-schema mapping locally to reduce the number of requests to the registry.
+
+Beyond the run-time distribution of schemas, schema registries can provide additional functionality that improves the system's resilience.
+As mentioned before, Avro provides tooling to check the compatibility of two schemas.
+A schema registry that integrates this tooling can provide compatibility checks for new schemas.
+
+An integration of compatibility checks into the schema management setup of the web-shop could look something like the following.
+The order service is deployed with incompatible changes to the \texttt{OrderCreated} schema.
+It receives a user request to submit an order and, after processing it, attempts to publish an \texttt{OrderCreated} event with the new schema.
+Since the service does not have an identifier for the new schema in its cache, it uploads it to the registry.
+The registry performs a compatibility check on the new schema using the most recent schema with the same name as the counterpart.
+The integrated Avro tooling recognizes that the schemas are incompatible, causing the registry to return an error to the order service's request.
+The service logs the error and does not publish the message.
+
+The setup in this example moves the compatibility check from the consumer (as described in \ref{sec:schema-benefits}) to the producer.
+It prevents producers from writing incompatible messages to Kafka, keeping the log clean.
+The example improves the system's resilience by containing failures due to incompatible changes in the producer instead of spreading them to the consumers.
+
+
+
+
 \subsection{Schema Management Solutions}
 
 \section{Overview of Schema Management Solutions}

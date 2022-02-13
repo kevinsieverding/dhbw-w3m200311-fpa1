@@ -62,12 +62,12 @@ Figure \ref{fig:web-shop} presents a simple overview of the shop's components an
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{webshop.drawio.png}
+  \includegraphics[width=0.8\linewidth]{webshop.drawio.png}
   \caption{Simplified Web-Shop Design Using Apache Kafka}\label{fig:web-shop}
 \end{figure}
 
-At the top, the \gls{ui} is comprised of two fragments: the catalog view and the checkout.
-The catalog view displays the shop's current inventory to the user, fetching it via a synchronous HTTP request from the catalog service.
+At the top, the \gls{ui} is comprised of two fragments: the catalog and the checkout.
+The catalog displays the shop's current inventory to the user, fetching it via a synchronous HTTP request from the catalog service.
 At the checkout, the user can order items from the catalog, for which the view sends an HTTP request to the order service.
 
 In the backend, the order service processes users' orders (payments, shipping calculation, \ldots) and publishes \texttt{OrderCreated} events to the \texttt{Orders} topic in Kafka.
@@ -78,7 +78,7 @@ Therefore, an event is always a message, but a message is not always an event.
 
 The inventory service consumes the events from the \texttt{Orders} topic and updates the shop's stock accordingly by publishing \texttt{StockUpdated} events to the \texttt{Stock} topic.
 These events are read by the catalog service, which also reads from the \texttt{Products} topic.
-The service joins these two event streams to materialize a view of the current stock combined with product details, which it presents to the catalog view upon request.
+The service joins these two event streams to materialize a view of the current stock combined with product details, which it presents to the catalog upon request.
 
 \subsection{Benefits of Schemas for Reactive \acrlongpl{is}}\label{sec:schema-benefits}
 

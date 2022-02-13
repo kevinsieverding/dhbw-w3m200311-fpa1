@@ -2,16 +2,11 @@
 
 \section{Schemas in Reactive \acrlongpl{is}}\label{sec:schemas-in-reactive-is}
 
-To examine how schemas can fit into a reactive system, consider the following example:
-A web-shop application where users can view the current catalog of products and place orders.
-The example omits other aspects of a web-shop for simplicity.
-The web-shop's architecture follows the microservice architecture and uses Kafka as a \gls{mom} to be reactive.
-
-\subsection{Schemas}
-
 This section examines schema technologies and how they can be used to make a distributed \gls{is} more reactive.
 For the latter purpose, the text proposes a hypothetical design of an \gls{is} using microservices and Kafka as a \gls{mom}.
 This example serves as a basis to analyze what advantages the introduction of Apache Avro as a schema technology provides, what new problems it causes and how to address them.\todo{reason for choosing avro/kafka}
+
+\subsection{Schemas}
 
 Schemas are structured documents that describe the structure of other documents.
 Schema technologies like XML schema, JSON schema, Apache Avro, or Google's Protocol Buffers (ProtoBuf) focus on describing the \emph{syntactical} structure of a document while others like the \gls{owl} or the \gls{rdf} intend to also define the \emph{semantic} structure of documents as well \parencites{xmlschema}{jsonschema}{avro}{protobuf}{owl}{rdf}.
@@ -57,6 +52,11 @@ The Avro project also includes tooling to check the compatibility of two schemas
 % \citeauthor{kreps_kafka_2011} chose Apache Avro as the serialization protocol for their message payloads due to its efficiency and schema evolution capabilities \parencite{kreps_kafka_2011}. 
 
 \subsection{A Reactive Web-Shop Application}\label{sec:web-shop}
+
+To examine how schemas can fit into a reactive system, consider the following example:
+A web-shop application where users can view the current catalog of products and place orders.
+The example omits other aspects of a web-shop for simplicity.
+The web-shop's architecture follows the microservice architecture and uses Kafka as a \gls{mom} to be reactive.
 
 Figure \ref{fig:web-shop} presents a simple overview of the shop's components and their communication.
 
